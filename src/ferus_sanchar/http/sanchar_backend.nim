@@ -1,5 +1,5 @@
 import std/[strutils, options, strformat, tables, net], 
-       sanchar, url, pretty, telemetry
+       ../[sanchar, url, telemetry], pretty
 
 type HTTPClient* = ref object of Sanchar
   socket*: Socket
@@ -59,7 +59,7 @@ proc parseResponseHeaders(data: string): TableRef[string, string] =
 
   headers
 
-method fetch*(client: HTTPClient, url: URL): tuple[connection: Connection, response: Response] =
+method fetch*(client: HTTPClient, url: URL): Response =
   var intercepted: bool
   var connection = Connection(
     to: url,
@@ -81,76 +81,26 @@ method fetch*(client: HTTPClient, url: URL): tuple[connection: Connection, respo
       wrapSocket(ctx, client.socket)
     else:
       raise newException(SancharDefect, "Attempt to connect to https scheme without compiling with SSL; re-compile with -d:ssl!")
-
+  
+  # Connect to the server
   client.socket.connect(connection.to.getHostname(), Port(connection.to.getPort()))
   
+  # Send request header
   let payload = client.getHandshakePayload(connection.to)
-
   client.socket.send(payload)
 
-  var 
-    data = ""
-    hData = ""
-    protocolVer = ""
-    statusMsg = ""
-    responseCode = 0
-    pos = 0
-    limit = int64.high
-    
-  # Parse response code and headers
-  while pos < limit:
-    let
-      line = client.socket.recvLine()
-      lowerLine = line.toLowerAscii()
-    
-    if pos == 0:
-      let
-        splitted = split(line, ' ')
-        proto = split(splitted[0], '/')
-        protoName = proto[0]
-        protoVer = proto[1]
-        respCode = splitted[1].parseInt()
-        additional = splitted[2]
+  var full: string
 
-      assert toLowerAscii(protoName) == "http"
+  while true:
+    let next = client.socket.recv(1)
+    if next == "":
+      break
 
-      protocolVer = protoVer
-      responseCode = respCode
-      statusMsg = additional
-    else:
-      if line.startsWith("\r\n"):
-        break
-    
-      hData &= line & "\n"
-      echo lowerLine
-      if lowerLine.startsWith("content-length"):
-        limit = line.split(' ')[1].parseInt()
+    full &= next
 
-    inc pos
-
-  # Parse the body
-  while pos < limit:
-    let c = client.socket.recv(1)
-    data &= c
-    inc pos
+  echo full
   
-  let headers = parseResponseHeaders(hData)
-  
-  if responseCode != 200:
-    connection.status = csDenied
-  else:
-    connection.status = csSuccess
-  
-  (
-    connection: connection, 
-    response: Response(
-      code: responseCode,
-      version: protocolVer,
-      statusMsg: statusMsg,
-      headers: headers,
-      body: data 
-    )
-  )
+  (connection: connection, response: Response())
 
 proc newHTTPClient*: HTTPClient =
   let socket = newSocket()

@@ -1,5 +1,5 @@
 # ferus-sanchar: overglorified networking garbage
-ferus-sanchar is the new networking stack for Ferus, as the name suggests. It only does HTTP(s) right now, and it has a cool URL parser and built in time measuring (check telemetry.nim)
+ferus-sanchar is the new networking stack for Ferus, as the name suggests. It's a wrapper around std/httpclient along with a new URL parser for now, but I'll add new backends later.
 
 "sanchar" means "communication" in Hindi, hence the name.
 

@@ -20,7 +20,7 @@ type
   
   # The current state of the URL parser
   URLParserState* = enum
-    sInit, parseScheme, parseHostname, parseFileHost, parsePort, parsePath, parseFragment, parseQuery,
+    sInit, parseScheme, parseHostname, parsePort, parsePath, parseFragment, parseQuery,
     sEnd, limbo
   
   # The URL parser itself
@@ -47,6 +47,20 @@ type
     parsedPort*: bool
     parsedPath*: bool
     parsedFragment*: bool
+
+proc `$`*(url: URL): string {.inline.} =
+  result = url.scheme & "://" & url.hostname
+
+  if url.portRaw.len > 0:
+    result &= ':' & url.portRaw
+
+  result &= '/' & url.path
+
+  if url.fragment.len > 0:
+    result &= '#' & url.fragment
+
+  if url.query.len > 0:
+    result &= '?' & url.query
 
 #[
   Get the scheme of a URL
@@ -81,21 +95,6 @@ proc getPath*(url: URL): string {.inline.} =
 ]#
 proc getFragment*(url: URL): string {.inline.} =
   url.fragment
-
-#[
-  Check if this is a valid IPV4 address
-]#
-proc isIpv4Address*(url: URL): bool =
-  for c in url.hostname:
-    if c notin {'0'..'9'} and c != '.':
-      return false
-
-  let splittedIp = url.hostname.split('.')
-
-  if splittedIp.len != 4:
-    return false
-
-  return true
 
 #[
   Get the TLD domain for this URL. It does not need to be a real TLD (eg. test.blahblahblah).
@@ -142,7 +141,7 @@ proc newURL*(
 #[
   Convert the URL into a human-friendly string representation
 ]#
-proc `$`*(url: URL): string {.inline.} =
+#[ proc `$`*(url: URL): string {.inline.} =
   fmt"""
 Scheme: {url.scheme}
 Hostname: {url.hostname}
@@ -150,48 +149,7 @@ Port: {url.port}
 Path(s): {url.path}
 Query: {url.query}
 Fragment: {url.fragment}
-"""
-
-#[
-  Compare two URLs.
-
-  Not using the `==` thing because it makes `pretty` freak out.
-]#
-proc compare*(url1: URL, url2: URL): bool {.inline.} =
-  url1.scheme == url2.scheme and
-  url1.hostname == url2.hostname and
-  url1.port == url2.port and
-  url1.path == url2.path and
-  url1.query == url2.query and
-  url1.fragment == url2.fragment
-
-#[
-  Parse queries and get a sequence of key-value pairs.
-]#
-proc queries*(url: URL): seq[tuple[key, value: string]] =
-  var s: seq[tuple[key, value: string]] = @[]
-
-  var
-    key, val: string
-    keyDone = false
-  
-  for query in url.query.split('&'):
-    for c in query:
-      if not keyDone:
-        if c != '=':
-          key &= c
-        else:
-          keyDone = true
-      else:
-        if c != '&':
-          val &= c
-    
-    keyDone = false
-    s.add((key: key, value: val))
-    key.reset()
-    val.reset()
-  
-  s
+""" ]#
 
 #[
   Parse a string into a URL, granted it is not malformed.
@@ -210,26 +168,16 @@ proc parse*(parser: URLParser, src: string): URL =
       continue
     
     if parser.state == parseScheme:
-      if curr != ':' and curr != '/':
-        if curr.isAlphaAscii() or curr in ['+', '-', '.']:
-          url.scheme &= curr.toLowerAscii()
-        else:
-          raise newException(URLParseDefect, "Non-alphanumeric character in URL scheme: " & curr)
+      if curr != ':':
+        url.scheme &= curr
       else:
-        parser.state = parseHostname
-        if curr == '/':
-          pos += 2
-        else:
-          pos += 3 # discard '//'
-        continue
-    elif parser.state == parseFileHost:
-      url.path &= curr
-    elif parser.state == parseHostname:
-      if url.scheme == "file":
-        pos -= 1
-        parser.state = parseFileHost
-        continue
+        if curr.toLowerAscii() in {'a'..'z'}:
+          raise newException(URLParseDefect, "Invalid character in URL scheme: " & curr)
 
+        parser.state = parseHostname
+        pos += 3 # discard '//'
+        continue
+    elif parser.state == parseHostname:
       if curr == '/':
         parser.state = parsePath
         pos += 1
@@ -259,13 +207,17 @@ proc parse*(parser: URLParser, src: string): URL =
     elif parser.state == parsePath:
       if curr == '#':
         parser.state = parseFragment
+        continue
       elif curr == '?':
         parser.state = parseQuery
+        continue
       else:
         url.path &= curr
     elif parser.state == parseFragment:
       url.fragment &= curr
     elif parser.state == parseQuery:
+      if curr.toLowerAscii() notin {'a'..'z'} and curr notin ['=', ' ']:
+        raise newException(URLParseDefect, "Non-alphabetic character found in URL during query parsing!")
       url.query &= curr
 
     inc pos

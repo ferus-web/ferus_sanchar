@@ -11,13 +11,13 @@ type
   Check whether a response was successful, i.e the server responded with a
   status code 200.
 ]#
-proc isSuccess*(response: Response): bool {.inline.} =
+proc isSuccess*(response: SancharResponse): bool {.inline.} =
   response.code == 200
 
 #[
   Get the protocol version the server uses as a semantic version
 ]#
-proc getVersion*(response: Response): Version {.inline.} =
+proc getVersion*(response: SancharResponse): Version {.inline.} =
   assert response.version.len > 0
   parseVersion(response.version)
 
@@ -26,7 +26,7 @@ proc getVersion*(response: Response): Version {.inline.} =
   response header. Keep in mind that this header is spoofable, so this isn't
   a fool-proof solution.
 ]#
-proc getLastModified*(response: Response): DateTime =
+proc getLastModified*(response: SancharResponse): DateTime =
   var
     day: string
     dayDone: bool
@@ -130,10 +130,10 @@ proc getLastModified*(response: Response): DateTime =
     hour, minute, second
   )
 
-proc getContentLength*(response: Response): int {.inline.} =
+proc getContentLength*(response: SancharResponse): int {.inline.} =
   response.headers["Content-Length"].parseInt()
 
-proc getCookies*(response: Response): TableRef[string, string] =
+proc getCookies*(response: SancharResponse): TableRef[string, string] =
   new result
 
   for cookie in response.headers["set-cookie"].split(';'):

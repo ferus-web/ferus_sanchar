@@ -1,7 +1,9 @@
 # Basic HTTP client
-import std/os
+import std/[
+  os, tables
+]
 import ferus_sanchar/[
-  http, sanchar, url
+  http/http, sanchar, url
 ]
 
 if paramCount() < 1:
@@ -11,11 +13,14 @@ if paramCount() < 1:
 let urlString = paramStr(1)
 
 let 
-  httpClient = newHTTPClient()
+  httpClient = newSancharHTTPClient()
   urlParser = newURLParser()
-  request = httpClient.fetch(
+  response = httpClient.fetch(
     urlParser.parse(urlString)
   )
 
-if request.response.code == 200:
-  echo request.response.body
+for name, val in response.headers:
+  echo name & ": " & val
+
+if response.code == 200:
+  echo response.body
