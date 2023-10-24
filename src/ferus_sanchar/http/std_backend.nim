@@ -44,7 +44,6 @@ method fetch*(httpClient: SancharHTTPClient, url: URL): SancharResponse =
   + "total"
 
   + "Allocate request headers"
-  echo $telem.times
   var resp = SancharResponse()
   var headers = newHttpHeaders()
   for header, val in httpClient.headers:

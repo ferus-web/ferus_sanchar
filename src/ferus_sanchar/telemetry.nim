@@ -13,7 +13,7 @@
 ##
 ##  echo $telem
 
-import std/[algorithm, strformat, times, tables], url
+import std/[algorithm, strformat, times], url
 
 type
   RequestTelemetry* = ref object of RootObj

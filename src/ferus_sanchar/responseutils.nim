@@ -12,21 +12,26 @@ type
   status code 200.
 ]#
 proc isSuccess*(response: SancharResponse): bool {.inline.} =
+  ## Check whether a response was successful, i.e the server responded with a status code 200.
+  ##
+  ## .. code-block:: Nim
+  ##  doAssert response.isSuccess(), "Response was not successful!"
   response.code == 200
 
 #[
   Get the protocol version the server uses as a semantic version
 ]#
 proc getVersion*(response: SancharResponse): Version {.inline.} =
+  ## Get the protocol version the server uses as a semantic version
+  ##
+  ## .. code-block:: Nim
+  ##  doAssert response.getVersion().major == 1
   assert response.version.len > 0
   parseVersion(response.version)
 
-#[
-  Get the time at which the page was last modified, using the Last-Modified
-  response header. Keep in mind that this header is spoofable, so this isn't
-  a fool-proof solution.
-]#
 proc getLastModified*(response: SancharResponse): DateTime =
+  ## Get the time at which the page was last modified, using the Last-Modified response header.
+  ## Keep in mind that this header is spoofable, so this isn't a fool-proof solution.
   var
     day: string
     dayDone: bool
@@ -131,9 +136,11 @@ proc getLastModified*(response: SancharResponse): DateTime =
   )
 
 proc getContentLength*(response: SancharResponse): int {.inline.} =
+  ## Get the length of the body sent to us by the server. Some sites may not send this, so beware.
   response.headers["Content-Length"].parseInt()
 
 proc getCookies*(response: SancharResponse): TableRef[string, string] =
+  ## Get all cookies provided in the set-cookie header as a `TableRef`
   new result
 
   for cookie in response.headers["set-cookie"].split(';'):
