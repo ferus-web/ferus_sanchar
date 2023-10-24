@@ -11,3 +11,12 @@ srcDir        = "src"
 
 requires "nim >= 1.6.12"
 requires "semver"
+
+task docs, "Generate docs":
+  exec """
+nim doc \
+--project \
+--index:on \
+--outdir:docs \
+src/ferus_sanchar.nim
+"""

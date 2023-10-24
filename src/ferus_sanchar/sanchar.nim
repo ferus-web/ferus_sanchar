@@ -1,4 +1,6 @@
-import std/[strformat, options, tables, heapqueue], url
+## Base implementation for all datatypes used in the entire stack.
+
+import std/[tables, strformat], url
 
 type
   ConnectionStatus* = enum

@@ -1,0 +1,4 @@
+SancharHTTPClient	ferus_sanchar/http/std_backend.html#SancharHTTPClient	std_backend: SancharHTTPClient	
+setHeader	ferus_sanchar/http/std_backend.html#setHeader,SancharHTTPClient,string,string	std_backend: setHeader(httpClient: SancharHTTPClient; key, val: string)	
+fetch	ferus_sanchar/http/std_backend.html#fetch.e,SancharHTTPClient,URL	std_backend: fetch(httpClient: SancharHTTPClient; url: URL): SancharResponse	
+newSancharHTTPClient	ferus_sanchar/http/std_backend.html#newSancharHTTPClient	std_backend: newSancharHTTPClient(): SancharHTTPClient	

@@ -1,0 +1,24 @@
+URLDefect	ferus_sanchar/url.html#URLDefect	url: URLDefect	
+URLParseDefect	ferus_sanchar/url.html#URLParseDefect	url: URLParseDefect	
+sInit	ferus_sanchar/url.html#sInit	URLParserState.sInit	
+parseScheme	ferus_sanchar/url.html#parseScheme	URLParserState.parseScheme	
+parseHostname	ferus_sanchar/url.html#parseHostname	URLParserState.parseHostname	
+parsePort	ferus_sanchar/url.html#parsePort	URLParserState.parsePort	
+parsePath	ferus_sanchar/url.html#parsePath	URLParserState.parsePath	
+parseFragment	ferus_sanchar/url.html#parseFragment	URLParserState.parseFragment	
+parseQuery	ferus_sanchar/url.html#parseQuery	URLParserState.parseQuery	
+sEnd	ferus_sanchar/url.html#sEnd	URLParserState.sEnd	
+limbo	ferus_sanchar/url.html#limbo	URLParserState.limbo	
+URLParserState	ferus_sanchar/url.html#URLParserState	url: URLParserState	
+URLParser	ferus_sanchar/url.html#URLParser	url: URLParser	
+URL	ferus_sanchar/url.html#URL	url: URL	
+`$`	ferus_sanchar/url.html#$,URL	url: `$`(url: URL): string	
+getScheme	ferus_sanchar/url.html#getScheme,URL	url: getScheme(url: URL): string	
+getHostname	ferus_sanchar/url.html#getHostname,URL	url: getHostname(url: URL): string	
+getPort	ferus_sanchar/url.html#getPort,URL	url: getPort(url: URL): uint	
+getPath	ferus_sanchar/url.html#getPath,URL	url: getPath(url: URL): string	
+getFragment	ferus_sanchar/url.html#getFragment,URL	url: getFragment(url: URL): string	
+getTLD	ferus_sanchar/url.html#getTLD,URL	url: getTLD(url: URL): string	
+newURL	ferus_sanchar/url.html#newURL,string,string,string,string,uint	url: newURL(scheme, hostname, path, fragment: string; port: uint = 0): URL	
+parse	ferus_sanchar/url.html#parse,URLParser,string	url: parse(parser: URLParser; src: string): URL	
+newURLParser	ferus_sanchar/url.html#newURLParser	url: newURLParser(): URLParser	

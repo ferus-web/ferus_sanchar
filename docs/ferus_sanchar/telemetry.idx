@@ -1,0 +1,9 @@
+RequestTelemetry	ferus_sanchar/telemetry.html#RequestTelemetry	telemetry: RequestTelemetry	
+dump	ferus_sanchar/telemetry.html#dump,RequestTelemetry	telemetry: dump(telemetry: RequestTelemetry = nil): string	
+`$`	ferus_sanchar/telemetry.html#$,RequestTelemetry	telemetry: `$`(telemetry: RequestTelemetry): string	
+getTime	ferus_sanchar/telemetry.html#getTime,RequestTelemetry,string	telemetry: getTime(telemetry: RequestTelemetry; operation: string): tuple[id: int,\n    op: string, start, stop, total: float]	
+start	ferus_sanchar/telemetry.html#start,RequestTelemetry,string	telemetry: start(telemetry: RequestTelemetry; operation: string = &quot;total&quot;)	
+`+`	ferus_sanchar/telemetry.html#+,string	telemetry: `+`(operation: string)	
+stop	ferus_sanchar/telemetry.html#stop,RequestTelemetry,string	telemetry: stop(telemetry: RequestTelemetry; operation: string)	
+`-`	ferus_sanchar/telemetry.html#-,string	telemetry: `-`(operation: string)	
+newTelemetry	ferus_sanchar/telemetry.html#newTelemetry,URL	telemetry: newTelemetry(url: URL): RequestTelemetry	

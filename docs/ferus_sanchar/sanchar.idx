@@ -1,0 +1,16 @@
+csInProgress	ferus_sanchar/sanchar.html#csInProgress	ConnectionStatus.csInProgress	
+csDenied	ferus_sanchar/sanchar.html#csDenied	ConnectionStatus.csDenied	
+csIntercepted	ferus_sanchar/sanchar.html#csIntercepted	ConnectionStatus.csIntercepted	
+csSuccess	ferus_sanchar/sanchar.html#csSuccess	ConnectionStatus.csSuccess	
+ConnectionStatus	ferus_sanchar/sanchar.html#ConnectionStatus	sanchar: ConnectionStatus	
+Connection	ferus_sanchar/sanchar.html#Connection	sanchar: Connection	
+SancharDefect	ferus_sanchar/sanchar.html#SancharDefect	sanchar: SancharDefect	
+Sanchar	ferus_sanchar/sanchar.html#Sanchar	sanchar: Sanchar	
+SancharResponse	ferus_sanchar/sanchar.html#SancharResponse	sanchar: SancharResponse	
+Interceptor	ferus_sanchar/sanchar.html#Interceptor	sanchar: Interceptor	
+`$`	ferus_sanchar/sanchar.html#$,ConnectionStatus	sanchar: `$`(status: ConnectionStatus): string	
+`$`	ferus_sanchar/sanchar.html#$,Sanchar	sanchar: `$`(sanchar: Sanchar): string	
+`$`	ferus_sanchar/sanchar.html#$,Connection	sanchar: `$`(conn: Connection): string	
+addInterceptor	ferus_sanchar/sanchar.html#addInterceptor,Sanchar,Interceptor	sanchar: addInterceptor(sanchar: Sanchar; interceptor: Interceptor)	
+fetch	ferus_sanchar/sanchar.html#fetch.e,Sanchar,URL	sanchar: fetch(sanchar: Sanchar; url: URL): tuple[connection: Connection,\n    response: SancharResponse]	
+newSanchar	ferus_sanchar/sanchar.html#newSanchar	sanchar: newSanchar(): Sanchar	

@@ -1,0 +1,6 @@
+InvalidValueDefect	ferus_sanchar/responseutils.html#InvalidValueDefect	responseutils: InvalidValueDefect	
+isSuccess	ferus_sanchar/responseutils.html#isSuccess,SancharResponse	responseutils: isSuccess(response: SancharResponse): bool	
+getVersion	ferus_sanchar/responseutils.html#getVersion,SancharResponse	responseutils: getVersion(response: SancharResponse): Version	
+getLastModified	ferus_sanchar/responseutils.html#getLastModified,SancharResponse	responseutils: getLastModified(response: SancharResponse): DateTime	
+getContentLength	ferus_sanchar/responseutils.html#getContentLength,SancharResponse	responseutils: getContentLength(response: SancharResponse): int	
+getCookies	ferus_sanchar/responseutils.html#getCookies,SancharResponse	responseutils: getCookies(response: SancharResponse): TableRef[string, string]	

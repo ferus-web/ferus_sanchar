@@ -1,8 +1,20 @@
-#[
-  URL parser
-]#
+## A mostly WhatWG compliant URL parser
+## Parsing URLs
+## ============
+##
+## This example creates a URL parser, and parses a string to make it a URL type.
+##
+## .. code-block:: Nim
+##  import ferus_sanchar
+##
+##  var parser = newURLParser()
+##  let url = parser.parse("https://google.com")
+##
+##  doAssert url.getScheme() == "https"
+##  doAssert url.getHostname() == "google.com"
+##  doAssert url.getTLD() == "com"
 
-import std/[strutils, strformat, tables]
+import std/[strutils, tables]
 
 const DEFAULT_PROTO_PORTS = {
   "ftp": 20'u,
@@ -12,43 +24,60 @@ const DEFAULT_PROTO_PORTS = {
 }.toTable
 
 type
-  # An error that occured whilst initializing a URL, possibly due to bad arguments
+  ## An error that occured whilst initializing a URL, possibly due to bad arguments
   URLDefect* = Defect
 
-  # An error that occured whilst parsing a URL
+  ## An error that occured whilst parsing a URL
   URLParseDefect* = Defect
   
-  # The current state of the URL parser
+  ## The current state of the URL parser
   URLParserState* = enum
     sInit, parseScheme, parseHostname, parsePort, parsePath, parseFragment, parseQuery,
     sEnd, limbo
   
-  # The URL parser itself
+  ## The URL parser itself
   URLParser* = ref object of RootObj
     state: URLParserState
   
-  # The URL type, contains everything for a URL
+  ## The URL type, contains everything for a URL
   URL* = ref object of RootObj
     # scheme     hostname                   path
     # ^^^^^   ^^^^^^^^^^^^^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     # https://wikipedia.org:443/wiki/Nim_(programming_language)#Adoption
     #                       ^^^                                 ^^^^^^^^
     #                      port                                 fragment
-    scheme: string
-    hostname: string
-    port: uint
-    portRaw: string
-    path: string
-    fragment: string
-    query*: string
+    scheme: string               ## The scheme of the URL.
+    hostname: string             ## The hostname of the URL.
+    port: uint                   ## The port of the URL.
+    portRaw: string              ## The raw string representing the port of the URL.
+    path: string                 ## The path of the URL.
+    fragment: string             ## The fragment of the URL.
+    query: string                ## The query of the URL.
 
-    parsedScheme*: bool
-    parsedHostname*: bool
-    parsedPort*: bool
-    parsedPath*: bool
-    parsedFragment*: bool
+    parsedScheme: bool
+    parsedHostname: bool
+    parsedPort: bool
+    parsedPath: bool
+    parsedFragment: bool
 
 proc `$`*(url: URL): string {.inline.} =
+  ## Turn the URL back into a string representation
+  ## This can turn a URL back into string form
+  ##
+  ## .. code-block:: nim
+  ##    import ferus_sanchar
+  ##
+  ##    let url = URL(
+  ##      scheme: "https",
+  ##      hostname: "google.com",
+  ##      port: 443,
+  ##      portRaw: "443",
+  ##      path: "",
+  ##      fragment: "",
+  ##      query: ""
+  ##    )
+  ##
+  ##    doAssert $url == "https://google.com/"
   result = url.scheme & "://" & url.hostname
 
   if url.portRaw.len > 0:
@@ -62,44 +91,122 @@ proc `$`*(url: URL): string {.inline.} =
   if url.query.len > 0:
     result &= '?' & url.query
 
-#[
-  Get the scheme of a URL
-]#
 proc getScheme*(url: URL): string {.inline.} =
+  ## Get the scheme of a URL
+  ##
+  ## .. code-block:: Nim
+  ##  import ferus_sanchar
+  ##
+  ##  let url = URL(
+  ##    scheme: "https",
+  ##    hostname: "google.com",
+  ##    port: 443,
+  ##    portRaw: "443",
+  ##    path: "",
+  ##    fragment: "",
+  ##    query: ""
+  ##  )
+  ##
+  ##  doAssert url.getScheme() == "https"
   url.scheme
 
-#[
-  Get the hostname of a URL
-]#
 proc getHostname*(url: URL): string {.inline.} =
+  ## Get the hostname of a URL
+  ##
+  ## .. code-block:: Nim
+  ##  import ferus_sanchar
+  ##
+  ##  let url = URL(
+  ##    scheme: "https",
+  ##    hostname: "google.com",
+  ##    port: 443,
+  ##    portRaw: "443",
+  ##    path: "",
+  ##    fragment: "",
+  ##    query: ""
+  ##  )
+  ##
+  ##  doAssert url.getHostname() == "google.com"
   url.hostname
 
-#[
-  Get the port of the URL which is an unsigned integer
-]#
 proc getPort*(url: URL): uint {.inline.} =
+  ## Get the port of the URL which is an unsigned integer
+  ##
+  ## .. code-block:: Nim
+  ##  import ferus_sanchar
+  ##
+  ##  let url = URL(
+  ##    scheme: "https",
+  ##    hostname: "google.com",
+  ##    port: 443,
+  ##    portRaw: "443",
+  ##    path: "",
+  ##    fragment: "",
+  ##    query: ""
+  ##  )
+  ##
+  ##  doAssert url.getPort() == 443
   if url.port == 0:
     if url.scheme in DEFAULT_PROTO_PORTS:
       return DEFAULT_PROTO_PORTS[url.scheme]
 
   url.port
 
-#[
-  Get the path of the URL, granted the URL has one
-]#
 proc getPath*(url: URL): string {.inline.} =
+  ## Get the path of the URL, granted the URL has one
+  ##
+  ## .. code-block:: Nim
+  ##  import ferus_sanchar
+  ##
+  ##  let url = URL(
+  ##    scheme: "https",
+  ##    hostname: "google.com",
+  ##    port: 443,
+  ##    portRaw: "443",
+  ##    path: "",
+  ##    fragment: "",
+  ##    query: ""
+  ##  )
+  ##
+  ##  doAssert url.getPath() == ""
   url.path
 
-#[
-  Get the fragment of the URL, granted it exists
-]#
 proc getFragment*(url: URL): string {.inline.} =
+  ## Get the fragment of the URL, granted it exists
+  ##
+  ## .. code-block:: Nim
+  ##  import ferus_sanchar
+  ##
+  ##  let url = URL(
+  ##    scheme: "https",
+  ##    hostname: "google.com",
+  ##    port: 443,
+  ##    portRaw: "443",
+  ##    path: "",
+  ##    fragment: "",
+  ##    query: ""
+  ##  )
+  ##
+  ##  doAssert url.getFragment() == ""
   url.fragment
 
-#[
-  Get the TLD domain for this URL. It does not need to be a real TLD (eg. test.blahblahblah).
-]#
-proc getTLD*(url: URL): string {.inline.} =
+proc getTLD*(url: URL): string =
+  ## Get the TLD domain for this URL. It does not need to be a real TLD (eg. test.blahblahblah).
+  ##
+  ## .. code-block:: Nim
+  ##  import ferus_sanchar
+  ##
+  ##  let url = URL(
+  ##    scheme: "https",
+  ##    hostname: "google.com",
+  ##    port: 443,
+  ##    portRaw: "443",
+  ##    path: "",
+  ##    fragment: "",
+  ##    query: ""
+  ##  )
+  ##
+  ##  doAssert url.getTLD() == "com"
   var 
     pos: int
     canInc = false
@@ -116,13 +223,34 @@ proc getTLD*(url: URL): string {.inline.} =
 
   tld
 
-#[
-  Create a new URL object, takes in the scheme, hostname, path, fragment and port.
-]#
+proc getQuery*(url: URL): string {.inline.} =
+  ## Get the query segment of the URL, granted there was one.
+  ##
+  ## .. code-block:: Nim
+  ##  import ferus_sanchar
+  ##
+  ##  let url = URL(
+  ##    scheme: "https",
+  ##    hostname: "google.com",
+  ##    port: 443,
+  ##    portRaw: "443",
+  ##    path: "",
+  ##    fragment: "",
+  ##    query: ""
+  ##  )
+  ##
+  ##  doAssert url.getQuery() == ""
+
+  url.query
+
 proc newURL*(
   scheme, hostname, path, fragment: string,
   port: uint = 0
 ): URL =
+  ## Create a new URL object, takes in the scheme, hostname, path, fragment and port.
+  ##
+  ## .. code-block:: Nim
+  ##  let url = newURL("https", "google.com", "", "", 443)
   var url = URL()
 
   url.scheme = scheme
@@ -151,10 +279,14 @@ Query: {url.query}
 Fragment: {url.fragment}
 """ ]#
 
-#[
-  Parse a string into a URL, granted it is not malformed.
-]#
 proc parse*(parser: URLParser, src: string): URL =
+  ## Parse a string into a URL, granted it is not malformed.
+  ##
+  ## .. code-block:: Nim
+  ##  import ferus_sanchar
+  ##
+  ##  var urlParser = newURLParser()
+  ##  let url = urlParser.parse("https://google.com")
   var
     pos: int
     curr: char
@@ -230,9 +362,10 @@ proc parse*(parser: URLParser, src: string): URL =
   parser.state = sInit
   url
 
-#[
-  Create a new URL parser, just a short helper for:
-  URLParser(state: sInit)
-]#
 proc newURLParser*: URLParser {.inline.} =
+  ## Create a new URL parser
+  ## Initialize a new URLParser with the state set to sInit
+  ##
+  ## .. code-block:: Nim
+  ##  var parser = newURLParser()
   URLParser(state: sInit)
